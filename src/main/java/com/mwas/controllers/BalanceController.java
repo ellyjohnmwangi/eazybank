@@ -14,8 +14,11 @@ import com.mwas.repository.AccountTransactionsRepository;
 @RestController
 public class BalanceController {
 
-    @Autowired
-    private AccountTransactionsRepository accountTransactionsRepository;
+    private final AccountTransactionsRepository accountTransactionsRepository;
+
+    BalanceController(AccountTransactionsRepository accountTransactionsRepository){
+        this.accountTransactionsRepository = accountTransactionsRepository;
+    }
 
     @PostMapping("/myBalance")
     public List<AccountTransactions> getBalanceDetails(@RequestBody Customer customer) {
