@@ -13,7 +13,7 @@ import com.mwas.repository.AccountsRepository;
 public class AccountController {
 
     @Autowired
-    AccountsRepository accountsRepository;
+    public AccountsRepository accountsRepository;
 
     @PostMapping("/myAccount")
     public Accounts getAccountDetails(@RequestBody Customer customer) {
