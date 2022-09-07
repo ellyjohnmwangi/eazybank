@@ -9,9 +9,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -41,16 +42,16 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
                 config.setMaxAge(3600l);
                 return config;
             }
-        }).and().csrf().disable()
+        }).and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                 .authorizeRequests()
                 .antMatchers("/myAccount").authenticated()
                 .antMatchers("/myLoans").authenticated()
                 .antMatchers("/myBalance").authenticated()
                 .antMatchers("/myCards").authenticated()
                 .antMatchers("/notices").permitAll()
-                .antMatchers("/contacts").permitAll()
+                .antMatchers("/contact").permitAll()
                 .and().
-                formLogin().and().
+//                formLogin().and().
                 httpBasic();
         /**
          * Configuration  to deny all the request
@@ -72,22 +73,22 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .authorities("read").and().passwordEncoder(NoOpPasswordEncoder.getInstance());
 
 //    }
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
-        UserDetails user = User.withUsername("admin").password("12345").authorities("admin").build();
-        UserDetails user1 = User.withUsername("user").password("12345").authorities("read").build();
-        userDetailsService.createUser(user);
-        userDetailsService.createUser(user1);
-        auth.userDetailsService(userDetailsService);
+    // @Override
+    // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    //     InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
+    //     UserDetails user = User.withUsername("admin").password("12345").authorities("admin").build();
+    //     UserDetails user1 = User.withUsername("user").password("12345").authorities("read").build();
+    //     userDetailsService.createUser(user);
+    //     userDetailsService.createUser(user1);
+    //     auth.userDetailsService(userDetailsService);
 
 
 
-    }
+    // }
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
-    }
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 
 }
