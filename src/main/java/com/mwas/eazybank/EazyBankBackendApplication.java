@@ -8,8 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-//@SpringBootApplication
-@EnableAutoConfiguration
+@SpringBootApplication
 @ComponentScans({ @ComponentScan("com.mwas.controllers"), @ComponentScan("com.mwas.config")})
 @EnableJpaRepositories("com.mwas.repository")
 @EntityScan("com.mwas.model")
