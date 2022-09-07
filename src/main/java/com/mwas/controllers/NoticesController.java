@@ -1,4 +1,4 @@
-package com.mwas.controllesr;
+package com.mwas.controllers;
 
 import java.util.List;
 
