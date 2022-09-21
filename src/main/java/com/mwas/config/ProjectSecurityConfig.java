@@ -1,5 +1,6 @@
 package com.mwas.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,7 +33,8 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
         /**
          * custom configurations
          * */
-        http.cors().configurationSource(new CorsConfigurationSource() {
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
+                cors().configurationSource(new CorsConfigurationSource() {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration config =new CorsConfiguration();
@@ -39,14 +42,15 @@ public class ProjectSecurityConfig extends WebSecurityConfigurerAdapter {
                 config.setAllowedMethods(Collections.singletonList("*"));
                 config.setAllowCredentials(true);
                 config.setAllowedHeaders(Collections.singletonList("*"));
+                config.setExposedHeaders(Arrays.asList("Authorization"));
                 config.setMaxAge(3600l);
                 return config;
             }
-        }).and().csrf().ignoringAntMatchers("/contact").csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+        }).and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/myAccount").authenticated()
-                .antMatchers("/myLoans").authenticated()
-                .antMatchers("/myBalance").authenticated()
+                .antMatchers("/myAccount").hasRole("USER")
+                .antMatchers("/myLoans").hasRole("ROOT")
+                .antMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/myCards").authenticated()
                 .antMatchers("/notices").permitAll()
                 .antMatchers("/contact").permitAll()
